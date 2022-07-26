@@ -1,7 +1,7 @@
 # Polar Open AccessLink example application
 
-This is an example application that uses the [Polar Open AccessLink](https://www.polar.com/accesslink-api) API.
-With the Polar Open AccessLink you can access the training and daily activity data recorded with Polar devices.
+This is a python client for polar-accesslink-api based on the official example application from [polar](https://github.com/polarofficial/accesslink-example-python).
+Unfortunally polar doesn't seem to review any merge-requests, even if they fix known bugs like authorisation etc. So I did this client based on the already given examples and added my data-queries based on this [documentation](https://www.polar.com/accesslink-api/#polar-accesslink-api)
 
 ## Prerequisites
 
@@ -21,8 +21,8 @@ Use `http://localhost:5000/oauth2_callback` as the authorization callback domain
 Fill in your client id and secret in config.yml:
 
 ```
-client_id: 57a715f8-b7e8-11e7-abc4-cec278b6b50a
-client_secret: 62c54f4a-b7e8-11e7-abc4-cec278b6b50a
+client_id: 
+client_secret: 
 ```
   
 #### 3. Install python dependencies
@@ -44,10 +44,10 @@ python authorization.py
 
 and navigate to 'https://flow.polar.com/oauth2/authorization?response_type=code&client_id=CLIENT_ID' to link user account.
 
-#### 5. Run example application
+#### 5. Run 
     
 ```
-python accesslink_example.py
+python main.py
 ```
 
 Once user has linked their user account to client application and synchronizes data from Polar device to Polar Flow, 
