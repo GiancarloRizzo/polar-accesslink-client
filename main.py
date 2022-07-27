@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from config import CLIENT_ID, CLIENT_SECRET, REDIRECT_URL
+from config import REDIRECT_URL
 from polar import PolarAccessLink
 
 

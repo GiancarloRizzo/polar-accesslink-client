@@ -1,2 +1,3 @@
 PORT=5000
-REDIRECT_URL=f'http://localhost:{PORT}/oauth2_callback'
+BASE_URL= f'http://localhost:{PORT}'
+REDIRECT_URL=f'{BASE_URL}/oauth2_callback'
