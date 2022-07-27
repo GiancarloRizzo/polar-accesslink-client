@@ -155,3 +155,26 @@ class PolarAccessLink(object):
         return exercise_datasets
 
 ### sleep data ######################################################################################################################################################################################################################################
+
+    def get_sleep(self):
+        r = requests.get('https://www.polaraccesslink.com/v3/users/sleep', params={}, headers = self.headers)
+        if r.status_code != 200:
+            return ''
+        else: 
+            return json.loads(r.text)
+    
+    def get_sleep_by_date(self, date):
+        r = requests.get('https://www.polaraccesslink.com/v3/users/sleep/{}'.format(date), params={}, headers = self.headers)
+        if r.status_code != 200:
+            return ''
+        else: 
+            return json.loads(r.text)
+    
+    def get_available_sleeps(self):
+        r = requests.get('https://www.polaraccesslink.com/v3/users/sleep/available', params={}, headers = self.headers)
+        if r.status_code != 200:
+            return []
+        else: 
+            return r
+
+### recharges ########################################################################################################################################################################################################################################
