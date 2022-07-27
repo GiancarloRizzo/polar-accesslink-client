@@ -10,7 +10,7 @@ Unfortunally polar doesn't seem to review any merge-requests, even if they fix k
 
 ## Getting Started
 
-#### 1. Create new API client 
+#### 1. Register API client 
  
 Navigate to https://admin.polaraccesslink.com. Log in with your Polar Flow account and create a new client.
 
@@ -18,7 +18,7 @@ Use `http://localhost:5000/oauth2_callback` as the authorization callback domain
   
 #### 2. Configure client credentials
 
-Fill in your client id and secret in config.yml:
+Fill in your client id and secret in credentials.yml:
 
 ```
 client_id: 
@@ -36,20 +36,14 @@ pip install -r requirements.txt
 User account needs to be linked to client application before client can get any user data. User is asked for authorization 
 in Polar Flow, and user is redirected back to application callback url with authorization code once user has accepted the request.
  
-To start example callback service, run:
+To start example oauth.service:
 
 ```
-python authorization.py
+python oauth.py
 ```
-
-and navigate to 'https://flow.polar.com/oauth2/authorization?response_type=code&client_id=CLIENT_ID' to link user account.
 
 #### 5. Run 
     
 ```
 python main.py
 ```
-
-Once user has linked their user account to client application and synchronizes data from Polar device to Polar Flow, 
-application is able to load data. Selecting 'Check available data' option from example application menu loads the 
-synchronized data from Polar Flow and prints it on the screen.
