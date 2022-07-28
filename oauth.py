@@ -8,7 +8,7 @@ from config import BASE_URL, REDIRECT_URL, PORT
 from utils import load_config, save_config
 from accesslink import AccessLink
 
-CONFIG_FILENAME = "config.yml"
+CONFIG_FILENAME = "credentials.yml"
 
 config = load_config('credentials.yml')
 client_id=config['client_id']
@@ -31,6 +31,7 @@ def get_access():
     config["user_id"] = token_response["x_user_id"]
     config["access_token"] = token_response["access_token"]
     save_config(config, CONFIG_FILENAME)
+    return
     
 @app.route("/")
 def authorize():
@@ -40,14 +41,18 @@ def authorize():
 @app.route('/oauth2_callback')
 def callback():
     get_access()
-    return redirect('visualizer')
+    shutdown()
+    return "Client authorized! You can now close this page."
 
-@app.route('/visualisizer')
-def rendering():
+def shutdown():
+    shutdown_func = request.environ.get('werkzeug.server.shutdown')
+    if shutdown_func is not None:
+        shutdown_func()
 
-    return
 
-print("Navigate to {}/ for authorization.\n".format(BASE_URL))
-app.run(host='localhost', port=PORT)
+def run():
+    print("Navigate to {}/ for authorization.\n".format(BASE_URL))
+    app.run(host='localhost', port=PORT)
+    return True
 
 
