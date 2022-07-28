@@ -3,10 +3,20 @@
 This is a python client for polar-accesslink-api based on the official example application from [polar](https://github.com/polarofficial/accesslink-example-python).
 Unfortunally polar doesn't seem to review any merge-requests, even if they fix known bugs like authorisation etc. So I did this client based on the already given examples and added my data-queries based on this [documentation](https://www.polar.com/accesslink-api/#polar-accesslink-api)
 
+## tasks are tested
+
+- [x] authentication
+- [ ] get userdata
+- [ ] get notifications
+- [ ] get activity-data
+- [ ] get training-data
+- [ ] get physical-info
+- [x] get sleep-data
+- [x] get recharge-data
+
 ## Prerequisites
 
 * [Polar Flow](https://flow.polar.com) account
-* Python 2 and pip related to Python 2
 
 ## Getting Started
 
@@ -31,19 +41,11 @@ client_secret:
 pip install -r requirements.txt
 ```
 
-#### 4. Link user 
+#### 4. Link user & run
 
 User account needs to be linked to client application before client can get any user data. User is asked for authorization 
 in Polar Flow, and user is redirected back to application callback url with authorization code once user has accepted the request.
- 
-To start example oauth.service:
-
-```
-python oauth.py
-```
-
-#### 5. Run 
-    
+   
 ```
 python main.py
 ```
