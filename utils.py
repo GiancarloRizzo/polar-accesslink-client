@@ -2,6 +2,7 @@
 
 import json
 import yaml
+import os
 
 
 def load_config(filename):
@@ -20,6 +21,8 @@ def pretty_print_json(data):
     print(json.dumps(data, indent=4, sort_keys=True))
 
 def write_json2file(data, destination):
+    if os.path.isdir('.test_data') == False:
+        os.mkdir('.test_data')
     j = json.dumps(data, indent=4)
     with open(".test_data/"+destination, "w") as outfile:
         outfile.write(j)
