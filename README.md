@@ -4,7 +4,7 @@ This is a python client for polar-accesslink-api and polar-teampro-api based on 
 Unfortunally polar doesn't seem to review any merge-requests, even if they fix known bugs like authorisation etc. So I did this client based on the already given examples and added my data-queries based on this [documentation](https://www.polar.com/accesslink-api/#polar-accesslink-api)
 
 
-## tasks are tested
+## tasks
 
 ### todos for accesslink-api
 
