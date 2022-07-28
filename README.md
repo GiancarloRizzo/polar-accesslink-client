@@ -9,7 +9,7 @@ Unfortunally polar doesn't seem to review any merge-requests, even if they fix k
 ### todos for accesslink-api
 
 - [x] authorization
-- [ ] get userdata
+- [x] user-related-api-calls
 - [ ] get notifications
 - [ ] get activity-data
 - [ ] get training-data
