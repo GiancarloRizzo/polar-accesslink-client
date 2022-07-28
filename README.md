@@ -1,11 +1,14 @@
-# Polar Open AccessLink example application
+# Polar-API-client
 
-This is a python client for polar-accesslink-api based on the official example application from [polar](https://github.com/polarofficial/accesslink-example-python).
+This is a python client for polar-accesslink-api and polar-teampro-api based on the official example application from [polar](https://github.com/polarofficial/accesslink-example-python).
 Unfortunally polar doesn't seem to review any merge-requests, even if they fix known bugs like authorisation etc. So I did this client based on the already given examples and added my data-queries based on this [documentation](https://www.polar.com/accesslink-api/#polar-accesslink-api)
+
 
 ## tasks are tested
 
-- [x] authentication
+### todos for accesslink-api
+
+- [x] authorization
 - [ ] get userdata
 - [ ] get notifications
 - [ ] get activity-data
@@ -13,6 +16,13 @@ Unfortunally polar doesn't seem to review any merge-requests, even if they fix k
 - [ ] get physical-info
 - [x] get sleep-data
 - [x] get recharge-data
+
+### todos for teampro-api
+
+- [ ] authorization
+- [ ] get teams and -details
+- [ ] get team-training-sessions and -details
+- [ ] get player-training-sesssions and -details
 
 ## Prerequisites
 
