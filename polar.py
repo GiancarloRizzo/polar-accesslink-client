@@ -32,40 +32,49 @@ class PolarAccessLink(object):
 
 ### user-data ###############################################################################################################################################################################################################################################
 
+    def register_user(self):
+        """
+        Register user based on oauth2-authentication-credentials. No return-value.
+        """
+        r = requests.post('https://www.polaraccesslink.com/v3/users', params={}, headers = self.headers)
+        self.config['user_id'] = r['member-id']
+        save_config(self.config, CONFIG_FILENAME)
+        return 
+
+    def delete_user(self, user_id):
+        """
+        Deletes user by user-id. No return-value.
+        """
+        r = requests.delete('https://www.polaraccesslink.com/v3/users/{}'.format(user_id), params={}, headers = self.headers)
+        return
+
     def get_userinfo(self):
         """
         Returns basic user-data.
         """
-        r = requests.post('https://www.polaraccesslink.com/v3/users', params={}, headers = self.headers)
-        if r.status_code != 200:
-            return None
-        else:
-            self.config['user_id'] = r['member-id']
-            save_config(self.config, CONFIG_FILENAME)
-            r = requests.get('https://www.polaraccesslink.com/v3/users/{}'.format(self.user_id), params={}, headers = self.headers)
+        r = requests.get('https://www.polaraccesslink.com/v3/users/{}'.format(self.config['user_id']), params={}, headers = self.headers)
         return json.loads(r.text)
 
-    def delete_user(self, user_id):
-        """
-        Deletes user by user-id.
-        """
-        r = requests.delete('https://www.polaraccesslink.com/v3/users/{}'.user_id, params={}, headers = self.headers)
-        return
-
 ### notifications ###########################################################################################################################################################################################################################################
-
-    def get_notifications(self):
-        r = requests.get('https://www.polaraccesslink.com/v3/notifications', params={}, headers = self.headers)
-        if r.status_code != 200:
-            return None
-        else:        
-            return json.loads(r.text)
+    # cant fetch any notifications via api-call...
+    # def get_notifications(self):
+    #     r = requests.get('https://www.polaraccesslink.com/v3/notifications', params={}, headers=self.headers)
+    #     if r.status_code != 200:
+    #         print('statuscode for notifications: '+str(r.status_code))
+    #         return None
+    #     else:        
+    #         return json.loads(r.text)
 
 ### activity ################################################################################################################################################################################################################################################
 
     def get_activity_transaction(self):
         """
-        Returns transaction with list of available activities.
+        Returns transaction with list of available activities. 
+        
+        Once a transaction is done, the same transaction-data is not available by an additional request anymore.
+        
+        Only data that has been uploaded to Flow after the user has been registered to your client will be available. 
+        Only data that has been uploaded in the last 30 days will be available.
         """
         activities = []
 
@@ -75,6 +84,7 @@ class PolarAccessLink(object):
             return []
 
         self.transaction = json.loads(r.text)
+        print(self.transaction)
         r = requests.get('https://www.polaraccesslink.com/v3/users/{}/activity-transactions/{}'.format(self.config['user_id'], self.transaction['transaction-id']), params={}, headers = self.headers)
         activities = json.loads(r.text)
 
@@ -83,42 +93,52 @@ class PolarAccessLink(object):
 
     def get_activity_summary(self, activities):
         """
-        Returns activity-summaries for given list of activies.
+        Returns list of activity-summaries for given list of activities.
         """
-        summaries = {}
+        summaries = []
         
         for activity in activities:
-            r = requests.get('https://www.polaraccesslink.com/v3/users/{}/activity-transactions/{}/activities/{}'.format(self.config['user_id'],self.transaction['transaction_id'],activity), params={}, headers = self.headers)
+            r = requests.get('{}'.format(activity), params={}, headers = self.headers)
+            print(r.status_code)
             if r.status_code != 200:
-                return {}
+                print('continued')
+                continue
             
-            summaries[activity] = json.loads(r.text)
+            summaries.append(json.loads(r.text))
         return summaries
 
         
-    def get_step_samples(self, activity):
+    def get_step_samples(self, activities):
         """
-        Returns step-samples for given list of activies.
+        Returns list of step-samples for given list of activities.
         """
-        r = requests.get('https://www.polaraccesslink.com/v3/users/{}/activity-transactions/{}/activities/{}/step-samples'.format(self.config['user_id'],self.transaction['transaction_id'],activity), params={}, headers = self.headers)
-        if r.status_code != 200:
-            return None
-        
-        stepsamples = json.loads(r.text)
+        stepsamples = []
+
+        for activity in activities:
+            r = requests.get('{}'.format(activity), params={}, headers = self.headers)
+            print(r.status_code)
+            if r.status_code != 200:
+                print('continued')
+                continue
+            
+            stepsamples.append(json.loads(r.text))
         return stepsamples
 
-    def get_zone_samples(self, activity):
+    def get_zone_samples(self, activities):
         """
-        Returns zone-samples for given list of activies.
+        Returns list of zone-samples for given list of activies.
         """
-        r = requests.get('https://www.polaraccesslink.com/v3/users/{}/activity-transactions/{}/activities/{}/zone-samples'.format(self.config['user_id'],self.transaction['transaction_id'],activity), params={}, headers = self.headers)
-        if r.status_code != 200:
-            return None
-        
-        zonesamples = json.loads(r.text)
+        zonesamples = []
+
+        for activity in activities:
+            r = requests.get('{}'.format(activity), params={}, headers = self.headers)
+            print(r.status_code)
+            if r.status_code != 200:
+                print('continued')
+                continue
+            
+            zonesamples.append(json.loads(r.text))
         return zonesamples
-
-
 
 ### training data ######################################################################################################################################################################################################################################
 
@@ -132,56 +152,65 @@ class PolarAccessLink(object):
             return exercises
         
         self.transaction_training = json.loads(r.text)
+        print(self.transaction_training)
+        
+        r = requests.get('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}'.format(self.config['user_id'],self.transaction_training['transaction-id']), params={}, headers = self.headers)
+        print(r.status_code)
+        exercises = json.loads(r.text)
 
-        r = requests.get('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}'.format(self.config['user_id'],self.transaction_training,exercises), params={}, headers = self.headers)
-        exercises =  json.loads(r.text)
 
-
-        requests.put('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}'.format(self.config['user_id'], self.transaction_training), params={}, headers = self.headers)
+        requests.put('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}'.format(self.config['user_id'], self.transaction_training['transaction-id']), params={}, headers = self.headers)
+        print(r.status_code)
         return exercises
 
 
     def get_training_summary(self, trainings):
         """
-        Returns training-summaries for given list of exercises.
+        Returns list of training-summaries for given list of exercises.
         """
-        summaries = {}
+        summaries = []
         
         for training in trainings:
-            r = requests.get('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}/exercises/{}'.format(self.config['user_id'],self.transaction['transaction_id'],training), params={}, headers = self.headers)
+            r = requests.get('{}'.format(training), params={}, headers = self.headers)
+            print(r.status_code)
             if r.status_code != 200:
-                return summaries
+                print('continued')
+                continue
             
-            summaries[training] = json.loads(r.text)
+            summaries.append(json.loads(r.text))
         return summaries
 
     def get_training_as_FIT(self, trainings):
         """
-        Returns training-data in .FIT-fomat for given list of exercises.
+        Returns list of training-data in .FIT-fomat for given list of exercises.
         """
-        exercise_datasets= {}
+        exercise_datasets= []
 
         for training in trainings:
-            r = requests.get('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}/exercises/{}/fit'.format(self.config['user_id'],self.transaction['transaction_id'],training), params={}, headers = self.headers)
+            r = requests.get('{}'.format(training), params={}, headers = self.headers)
+            print(r.status_code)
             if r.status_code != 200:
-                return exercise_datasets
+                print('continued')
+                continue
             
-            exercise_datasets[training] = r.text
+            exercise_datasets.append(json.loads(r.text))
         return exercise_datasets
 
 
     def get_training_as_gpx(self, trainings):
         """
-        Returns training-data in .GPX-fomat for given list of exercises.
+        Returns list of training-data in .GPX-fomat for given list of exercises.
         """
-        exercise_datasets= {}
+        exercise_datasets= []
 
         for training in trainings:
-            r = requests.get('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}/exercises/{}/gpx'.format(self.config['user_id'],self.transaction['transaction_id'],training), params={}, headers = self.headers)
+            r = requests.get('{}'.format(training), params={}, headers = self.headers)
+            print(r.status_code)
             if r.status_code != 200:
-                return exercise_datasets
+                print('continued')
+                continue
             
-            exercise_datasets[training] = r.text
+            exercise_datasets.append(json.loads(r.text))
         return exercise_datasets
 
     
@@ -189,32 +218,32 @@ class PolarAccessLink(object):
         """
         Returns heartrate-rones for given list of exercises.
         """
-        exercise_datasets= {}
+        exercise_datasets= []
 
         for training in trainings:
-            r = requests.get('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}/exercises/{}/heart-rate-zones'.format(self.config['user_id'],self.transaction['transaction_id'],training), params={}, headers = self.headers)
+            r = requests.get('{}'.format(training), params={}, headers = self.headers)
+            print(r.status_code)
             if r.status_code != 200:
-                return exercise_datasets
+                print('continued')
+                continue
             
-            exercise_datasets[training] = r.text
+            exercise_datasets.append(json.loads(r.text))
         return exercise_datasets
-
-    # def get_available_samples():
-
-    # def get_sample_data():
 
     def get_training_as_tcx(self, trainings):
         """
-        Returns training-data in .TCX-fomat for given list of exercises.
+        Returns list of training-data in .TCX-fomat for given list of exercises.
         """
-        exercise_datasets= {}
+        exercise_datasets= []
 
         for training in trainings:
-            r = requests.get('https://www.polaraccesslink.com/v3/users/{}/exercise-transactions/{}/exercises/{}/tcx'.format(self.config['user_id'],self.transaction['transaction_id'],training), params={}, headers = self.headers)
+            r = requests.get('{}'.format(training), params={}, headers = self.headers)
+            print(r.status_code)
             if r.status_code != 200:
-                return exercise_datasets
+                print('continued')
+                continue
             
-            exercise_datasets[training] = r.text
+            exercise_datasets.append(json.loads(r.text))
         return exercise_datasets
 
 ### sleep data ######################################################################################################################################################################################################################################
@@ -241,7 +270,7 @@ class PolarAccessLink(object):
     
     def get_available_sleeps(self):
         """
-        Returns all available sleeps within last 28 days.
+        Returns list of all available sleeps within last 28 days.
         """
         r = requests.get('https://www.polaraccesslink.com/v3/users/sleep/available', params={}, headers = self.headers)
         if r.status_code != 200:
@@ -280,7 +309,7 @@ class PolarAccessLink(object):
         r = requests.post('https://www.polaraccesslink.com/v3/users/{}/physical-information-transactions/'.format(self.config['user_id']), params={}, headers = self.headers)
 
         if r.status_code  != 201:
-            return None
+            return {}
 
         self.transaction_phy = json.loads(r.text)
         r = requests.get('https://www.polaraccesslink.com/v3/users/{}/physical-information-transactions/{}'.format(self.config['user_id'], self.transaction_phy['transaction-id']), params={}, headers = self.headers)
@@ -291,14 +320,16 @@ class PolarAccessLink(object):
 
     def get_physical_infos(self, transactions):
         """
-        Returns available physical-infos for given list of physical-transactions
+        Returns list of all available physical-infos for given list of physical-transactions
         """
-        physical_infos = {}
+        physical_infos = []
         
         for transaction in transactions:
-            r = requests.get('https://www.polaraccesslink.com/v3/users/{}/physical-information-transactions/{}/physical-informations/{}'.format(self.config['user_id'],self.transaction_phy['transaction_id'],transaction), params={}, headers = self.headers)
+            r = requests.get('{}'.format(transaction), params={}, headers = self.headers)
+            print(r.status_code)
             if r.status_code != 200:
-                return physical_infos
+                print('continued')
+                continue
             
-            physical_infos[transaction] = json.loads(r.text)
+            physical_infos.append(json.loads(r.text))
         return physical_infos
